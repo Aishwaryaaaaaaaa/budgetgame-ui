@@ -1,23 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react';
+import Landing from './pages/Landing';
+import Methodology from './pages/Methodology';
+import Simulator from './pages/Simulator';
+import Navbar from './components/Navbar';
 
 function App() {
+  const [page, setPage] = useState('landing');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar setPage={setPage} page={page} />
+      {page === 'landing' && <Landing setPage={setPage} />}
+      {page === 'methodology' && <Methodology />}
+      {page === 'simulator' && <Simulator />}
     </div>
   );
 }
