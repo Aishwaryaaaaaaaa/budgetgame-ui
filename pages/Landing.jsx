@@ -47,7 +47,7 @@ export default function Landing({ setPage }) {
 
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '3rem 2rem 5rem', fontFamily: 'Inter, system-ui, -apple-system, sans-serif' }}>
-      {/* Hero section */}
+      {/* Hero section – asymmetrical */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center', marginBottom: '5rem' }}>
         <div style={{ animation: 'fadeInUp 0.6s ease-out' }}>
           <div style={{
