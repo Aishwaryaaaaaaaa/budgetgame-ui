@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { computeBudgetQuality, simulate } from '../lib/simulation';
+import { useState, useEffect, useCallback } from 'react'
 import axios from 'axios'
 import SliderGroup from '../components/SliderGroup'
 import PayoffMatrix from '../components/PayoffMatrix'
@@ -23,16 +24,16 @@ export default function Simulator() {
 
   const set = (key, val) => setParams(p => ({...p, [key]:val}))
 
-  const run = async (p=params) => {
+  const run = useCallback(async (p=params) => {
     setLoading(true)
     try {
       const r = await axios.post(`${API}/simulate`, p)
       setResult(r.data)
     } catch(e) { console.error(e) }
     setLoading(false)
-  }
+  }, [params])  // depends on params
 
-  useEffect(() => { run() }, [])
+  useEffect(() => { run() }, [run])
 
   const card = (label, value, color, sub) => (
     <div style={{background:'#1a1a1a', border:'1px solid #757070',
