@@ -1,5 +1,4 @@
-import { computeBudgetQuality, simulate } from '../lib/simulation';
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import SliderGroup from '../components/SliderGroup'
 import PayoffMatrix from '../components/PayoffMatrix'
@@ -24,19 +23,18 @@ export default function Simulator() {
 
   const set = (key, val) => setParams(p => ({...p, [key]:val}))
 
-  const run = useCallback(async (p = params) => {
-    setLoading(true)
-    try {
-      const r = await axios.post(`${API}/simulate`, p)
-      setResult(r.data)
-    } catch(e) { console.error(e) }
-    setLoading(false)
-  }, [params]) // depends on params
-
+  // Run simulation on mount and when params change via preset buttons
   useEffect(() => {
-    run()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // run once on mount
+    const runSimulation = async () => {
+      setLoading(true)
+      try {
+        const r = await axios.post(`${API}/simulate`, params)
+        setResult(r.data)
+      } catch(e) { console.error(e) }
+      setLoading(false)
+    }
+    runSimulation()
+  }, [params]) // re-run when params change (preset or slider)
 
   const card = (label, value, color, sub) => (
     <div style={{background:'#1a1a1a', border:'1px solid #757070',
@@ -63,7 +61,7 @@ export default function Simulator() {
           </div>
           {PRESETS.map(p => (
             <button key={p.name}
-              onClick={() => { setParams(p.params); setActive(p.name); run(p.params) }}
+              onClick={() => { setParams(p.params); setActive(p.name) }}
               style={{width:'100%', padding:'8px 12px', marginBottom:5,
                       background: active===p.name ? '#1e3a5f' : '#1a1a1a',
                       border: active===p.name ? '1px solid #728497' : '1px solid #757070',
@@ -100,7 +98,7 @@ export default function Simulator() {
             onChange={v => set('credibility',v/100)}/>
         </div>
 
-        <button onClick={() => run()} disabled={loading}
+        <button onClick={() => setParams({...params})} disabled={loading}
           style={{padding:'12px', background:loading?'#757070':'#728497',
                   color:'white', border:'none', borderRadius:10,
                   fontSize:14, fontWeight:600,
