@@ -6,7 +6,7 @@ import PayoffMatrix from '../components/PayoffMatrix'
 import PlayerCard from '../components/PlayerCard'
 import EquilibriumPath from '../components/EquilibriumPath'
 
-const API = 'http://localhost:8001'
+const API = process.env.REACT_APP_API_URL || 'http://localhost:8001'
 
 const PRESETS = [
   {name:'India FY25',       icon:'🇮🇳', params:{capex:11.1,subsidy:3.8,deficit_target:5.1,credibility:0.93}},
@@ -24,16 +24,19 @@ export default function Simulator() {
 
   const set = (key, val) => setParams(p => ({...p, [key]:val}))
 
-  const run = useCallback(async (p=params) => {
+  const run = useCallback(async (p = params) => {
     setLoading(true)
     try {
       const r = await axios.post(`${API}/simulate`, p)
       setResult(r.data)
     } catch(e) { console.error(e) }
     setLoading(false)
-  }, [params])  // depends on params
+  }, [params]) // depends on params
 
-  useEffect(() => { run() }, [run])
+  useEffect(() => {
+    run()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // run once on mount
 
   const card = (label, value, color, sub) => (
     <div style={{background:'#1a1a1a', border:'1px solid #757070',
